@@ -10,7 +10,6 @@ import java.util.Properties;
 
 @Configuration
 public class KaptchaConfig {
-
     @Bean
     public Producer kaptchaProducer() {
         Properties properties = new Properties();
@@ -18,7 +17,7 @@ public class KaptchaConfig {
         properties.setProperty("kaptcha.image.height", "40");
         properties.setProperty("kaptcha.textproducer.font.size", "32");
         properties.setProperty("kaptcha.textproducer.font.color", "0,0,0");
-        properties.setProperty("kaptcha.textproducer.char.string", "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYAZ");
+        properties.setProperty("kaptcha.textproducer.char.string", "0123456789");
         properties.setProperty("kaptcha.textproducer.char.length", "4");
         properties.setProperty("kaptcha.noise.impl", "com.google.code.kaptcha.impl.NoNoise");
 
@@ -27,5 +26,4 @@ public class KaptchaConfig {
         kaptcha.setConfig(config);
         return kaptcha;
     }
-
 }
