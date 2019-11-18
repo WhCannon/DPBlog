@@ -10,7 +10,6 @@ import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Scanner;
 
 @Service
 public class DiscussPostService {
@@ -47,7 +46,6 @@ public class DiscussPostService {
     }
 
     public int addDiscussPost(DiscussPost post) {
-        Scanner sc = new Scanner(System.in);
         if (post == null) {
             throw new IllegalArgumentException("参数不能为空!");
         }
