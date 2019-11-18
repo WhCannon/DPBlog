@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +57,7 @@ public class SensitiveFilter {
     }
 
 
-//    @PostConstruct  //初始化时构造敏感词前缀树
+    @PostConstruct  //初始化时构造敏感词前缀树
     public void init() {
         try (
                 InputStream is = this.getClass().getClassLoader().getResourceAsStream("sensitive-words.txt");
