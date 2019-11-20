@@ -104,6 +104,9 @@ public class LoginController implements CommunityConstant {
         if (StringUtils.isNotBlank(kaptchaOwner)) {
             String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
             kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+        }else{
+            model.addAttribute("codeMsg","验证码过期");
+            return "/site/login";
         }
 
         if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
@@ -149,7 +152,6 @@ public class LoginController implements CommunityConstant {
         // 验证码的归属
         String kaptchaOwner = CommunityUtil.generateUUID();
         Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
-        cookie.setMaxAge(60);
         cookie.setPath(contextPath);
         response.addCookie(cookie);
         // 将验证码存入Redis

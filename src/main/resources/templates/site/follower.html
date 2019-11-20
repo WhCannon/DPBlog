@@ -6,8 +6,7 @@
 	<link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 	<link rel="stylesheet" th:href="@{/css/global.css}" />
-	<link rel="stylesheet" th:href="@{/css/letter.css}" />
-	<title>DPBlog-私信详情</title>
+	<title>DPBlog-关注</title>
 </head>
 <body>
 <div class="nk-container">
@@ -62,74 +61,40 @@
 	<!-- 内容 -->
 	<div class="main">
 		<div class="container">
-			<div class="row">
-				<div class="col-8">
-					<h6><b class="square"></b> 来自 <i class="text-success" th:utext="${target.username}">落基山脉下的闲人</i> 的私信</h6>
-				</div>
-				<div class="col-4 text-right">
-					<button type="button" class="btn btn-secondary btn-sm" onclick="back();">返回</button>
-					<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#sendModal">给TA私信</button>
-				</div>
-			</div>
-			<!-- 弹出框 -->
-			<div class="modal fade" id="sendModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-lg" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">发私信</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<form>
-								<div class="form-group">
-									<label for="recipient-name" class="col-form-label">发给：</label>
-									<input type="text" class="form-control" id="recipient-name" th:value="${target.username}">
-								</div>
-								<div class="form-group">
-									<label for="message-text" class="col-form-label">内容：</label>
-									<textarea class="form-control" id="message-text" rows="10"></textarea>
-								</div>
-							</form>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-							<button type="button" class="btn btn-primary" id="sendBtn">发送</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- 提示框 -->
-			<div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="hintModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-lg" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="hintModalLabel">提示</h5>
-						</div>
-						<div class="modal-body" id="hintBody">
-							发送完毕!
-						</div>
-					</div>
-				</div>
+			<div class="position-relative">
+				<!-- 选项 -->
+				<ul class="nav nav-tabs mb-3">
+					<li class="nav-item">
+						<a class="nav-link position-relative" th:href="@{|/followees/${user.id}|}">
+							<i class="text-info" th:utext="${user.username}">Nowcoder</i> 关注的人
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link position-relative active" th:href="@{|/followers/${user.id}|}">
+							 <i class="text-info" th:utext="${user.username}">Nowcoder</i> 的粉丝
+						</a>
+					</li>
+				</ul>
+				<a th:href="@{|/user/profile/${user.id}|}" class="text-muted position-absolute rt-0">返回个人主页&gt;</a>
 			</div>
 
-			<!-- 私信列表 -->
-			<ul class="list-unstyled mt-4">
-				<li class="media pb-3 pt-3 mb-2" th:each="map:${letters}">
-					<a th:href="@{|/user/profile/${map.fromUser.id}|}">
-						<img th:src="${map.fromUser.headerUrl}" th:href="@{|/user/profile/${map.fromUser.id}|}"class="mr-4 rounded-circle user-header" alt="用户头像" >
+			<!-- 粉丝列表 -->
+			<ul class="list-unstyled">
+				<li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:each="map:${users}">
+					<a th:href="@{|/user/profile/${map.user.id}|}">
+						<img th:src="${map.user.headerUrl}" class="mr-4 rounded-circle user-header" alt="用户头像" >
 					</a>
-					<div class="toast show d-lg-block" role="alert" aria-live="assertive" aria-atomic="true">
-						<div class="toast-header">
-							<strong class="mr-auto"  th:utext="${map.fromUser.username}">落基山脉下的闲人</strong>
-							<small th:text="${#dates.format(map.letter.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-25 15:49:32</small>
-							<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="toast-body" th:utext="${map.letter.content}">
-							君不见, 黄河之水天上来, 奔流到海不复回!
+					<div class="media-body">
+						<h6 class="mt-0 mb-3">
+							<span class="text-success" th:utext="${map.user.username}">落基山脉下的闲人</span>
+							<span class="float-right text-muted font-size-12">
+									关注于 <i th:text="${#dates.format(map.followTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-28 14:13:25</i>
+								</span>
+						</h6>
+						<div>
+							<input type="hidden" id="entityId" th:value="${map.user.id}">
+							<button type="button" th:class="|btn ${map.hasFollowed?'btn-secondary':'btn-info'} btn-sm float-right follow-btn|"
+									th:if="${loginUser!=null && loginUser.id!=map.user.id}" th:text="${map.hasFollowed?'已关注':'关注TA'}">关注TA</button>
 						</div>
 					</div>
 				</li>
@@ -218,11 +183,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 <script th:src="@{/js/global.js}"></script>
-<script th:src="@{/js/letter.js}"></script>
-<script>
-	function back() {
-		location.href = CONTEXT_PATH + "/letter/list";
-	}
-</script>
+<script th:src="@{/js/profile.js}"></script>
 </body>
 </html>
