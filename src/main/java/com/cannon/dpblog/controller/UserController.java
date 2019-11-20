@@ -2,6 +2,7 @@ package com.cannon.dpblog.controller;
 
 import com.cannon.dpblog.annotation.LoginRequired;
 import com.cannon.dpblog.entity.User;
+import com.cannon.dpblog.service.FollowService;
 import com.cannon.dpblog.service.LikeService;
 import com.cannon.dpblog.service.UserService;
 import com.cannon.dpblog.util.CommunityConstant;
@@ -47,8 +48,8 @@ public class UserController implements CommunityConstant {
     private HostHolder hostHolder;
     @Autowired
     private LikeService likeService;
-//    @Autowired
-//    private FollowService followService;
+    @Autowired
+    private FollowService followService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -136,17 +137,17 @@ public class UserController implements CommunityConstant {
         model.addAttribute("likeCount", likeCount);
 
         // 关注数量
-//        long followeeCount = followService.findFolloweeCount(userId, ENTITY_TYPE_USER);
-//        model.addAttribute("followeeCount", followeeCount);
+        long followeeCount = followService.findFolloweeCount(userId, ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount", followeeCount);
         // 粉丝数量
-//        long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER, userId);
-//        model.addAttribute("followerCount", followerCount);
+        long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER, userId);
+        model.addAttribute("followerCount", followerCount);
         // 当前登录用户是否已关注
-//        boolean hasFollowed = false;
-//        if (hostHolder.getUser() != null) {
-//            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), ENTITY_TYPE_USER, userId);
-//        }
-//        model.addAttribute("hasFollowed", hasFollowed);
+        boolean hasFollowed = false;
+        if (hostHolder.getUser() != null) {
+            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), ENTITY_TYPE_USER, userId);
+        }
+        model.addAttribute("hasFollowed", hasFollowed);
 
         return "/site/profile";
     }
