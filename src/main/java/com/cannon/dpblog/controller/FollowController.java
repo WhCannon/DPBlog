@@ -2,6 +2,8 @@ package com.cannon.dpblog.controller;
 
 import com.cannon.dpblog.entity.Page;
 import com.cannon.dpblog.entity.User;
+import com.cannon.dpblog.event.Event;
+import com.cannon.dpblog.event.EventProducer;
 import com.cannon.dpblog.service.FollowService;
 import com.cannon.dpblog.service.UserService;
 import com.cannon.dpblog.util.CommunityConstant;
@@ -30,8 +32,8 @@ public class FollowController implements CommunityConstant {
     @Autowired
     private UserService userService;
 
-//    @Autowired
-//    private EventProducer eventProducer;
+    @Autowired
+    private EventProducer eventProducer;
 
     /*
             关注
@@ -43,13 +45,13 @@ public class FollowController implements CommunityConstant {
         followService.follow(user.getId(), entityType, entityId);
 
         // 触发关注事件
-//        Event event = new Event()
-//                .setTopic(TOPIC_FOLLOW)
-//                .setUserId(hostHolder.getUser().getId())
-//                .setEntityType(entityType)
-//                .setEntityId(entityId)
-//                .setEntityUserId(entityId);
-//        eventProducer.fireEvent(event);
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId);
+        eventProducer.fireEvent(event);
 
         return CommunityUtil.getJSONString(0, "已关注!");
     }

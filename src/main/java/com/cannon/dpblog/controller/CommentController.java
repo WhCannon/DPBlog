@@ -2,6 +2,8 @@ package com.cannon.dpblog.controller;
 
 import com.cannon.dpblog.entity.Comment;
 import com.cannon.dpblog.entity.DiscussPost;
+import com.cannon.dpblog.event.Event;
+import com.cannon.dpblog.event.EventProducer;
 import com.cannon.dpblog.service.CommentService;
 import com.cannon.dpblog.service.DiscussPostService;
 import com.cannon.dpblog.util.CommunityConstant;
@@ -25,8 +27,8 @@ public class CommentController implements CommunityConstant {
     @Autowired
     private HostHolder hostHolder;
 
-//    @Autowired
-//    private EventProducer eventProducer;
+    @Autowired
+    private EventProducer eventProducer;
 
     @Autowired
     private DiscussPostService discussPostService;
@@ -42,20 +44,20 @@ public class CommentController implements CommunityConstant {
         commentService.addComment(comment);
 
         // 发送评论通知
-//        Event event = new Event()
-//                .setTopic(TOPIC_COMMENT)
-//                .setUserId(hostHolder.getUser().getId())
-//                .setEntityType(comment.getEntityType())
-//                .setEntityId(comment.getEntityId())
-//                .setData("postId", discussPostId);
+        Event event = new Event()
+                .setTopic(TOPIC_COMMENT)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(comment.getEntityType())
+                .setEntityId(comment.getEntityId())
+                .setData("postId", discussPostId);
         if (comment.getEntityType() == ENTITY_TYPE_POST) {
             DiscussPost target = discussPostService.findDiscussPostById(comment.getEntityId());
-//            event.setEntityUserId(target.getUserId());
+            event.setEntityUserId(target.getUserId());
         } else if (comment.getEntityType() == ENTITY_TYPE_COMMENT) {
             Comment target = commentService.findCommentById(comment.getEntityId());
-//            event.setEntityUserId(target.getUserId());
+            event.setEntityUserId(target.getUserId());
         }
-//        eventProducer.fireEvent(event);
+        eventProducer.fireEvent(event);
 
 //        if (comment.getEntityType() == ENTITY_TYPE_POST) {
 //            // 触发发帖事件
