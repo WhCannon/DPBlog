@@ -1,6 +1,8 @@
 package com.cannon.dpblog.controller;
 
 import com.cannon.dpblog.entity.User;
+import com.cannon.dpblog.event.Event;
+import com.cannon.dpblog.event.EventProducer;
 import com.cannon.dpblog.service.LikeService;
 import com.cannon.dpblog.util.CommunityConstant;
 import com.cannon.dpblog.util.CommunityUtil;
@@ -25,8 +27,8 @@ public class LikeController implements CommunityConstant {
     @Autowired
     private HostHolder hostHolder;
 
-//    @Autowired
-//    private EventProducer eventProducer;
+    @Autowired
+    private EventProducer eventProducer;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -51,16 +53,16 @@ public class LikeController implements CommunityConstant {
         map.put("likeStatus", likeStatus);
 
         // 触发点赞事件
-//        if (likeStatus == 1) {
-//            Event event = new Event()
-//                    .setTopic(TOPIC_LIKE)
-//                    .setUserId(hostHolder.getUser().getId())
-//                    .setEntityType(entityType)
-//                    .setEntityId(entityId)
-//                    .setEntityUserId(entityUserId)
-//                    .setData("postId", postId);
-//            eventProducer.fireEvent(event);
-//        }
+        if (likeStatus == 1) {
+            Event event = new Event()
+                    .setTopic(TOPIC_LIKE)
+                    .setUserId(hostHolder.getUser().getId())
+                    .setEntityType(entityType)
+                    .setEntityId(entityId)
+                    .setEntityUserId(entityUserId)
+                    .setData("postId", postId);
+            eventProducer.fireEvent(event);
+        }
 
         if(entityType == ENTITY_TYPE_POST){
             // 计算帖子分数
