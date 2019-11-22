@@ -1,6 +1,7 @@
 package com.cannon.dpblog.event;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cannon.dpblog.elasticsearch.ElasticsearchService;
 import com.cannon.dpblog.entity.DiscussPost;
 import com.cannon.dpblog.entity.Message;
 import com.cannon.dpblog.service.DiscussPostService;
@@ -26,8 +27,8 @@ public class EventConsumer implements CommunityConstant {
     @Autowired
     private DiscussPostService discussPostService;
 
-//    @Autowired
-//    private ElasticsearchService elasticsearchService;
+    @Autowired
+    private ElasticsearchService elasticsearchService;
 
     /*
             发生系统通知
@@ -78,7 +79,7 @@ public class EventConsumer implements CommunityConstant {
         }
 
         DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
-//        elasticsearchService.saveDiscussPost(post);
+        elasticsearchService.saveDiscussPost(post);
     }
 
     // 删帖事件
@@ -94,7 +95,7 @@ public class EventConsumer implements CommunityConstant {
             return;
         }
 
-//        elasticsearchService.deleteDiscussPost(event.getEntityId());
+        elasticsearchService.deleteDiscussPost(event.getEntityId());
     }
 
 }
