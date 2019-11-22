@@ -8,6 +8,7 @@ import com.cannon.dpblog.service.CommentService;
 import com.cannon.dpblog.service.DiscussPostService;
 import com.cannon.dpblog.util.CommunityConstant;
 import com.cannon.dpblog.util.HostHolder;
+import com.cannon.dpblog.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -59,19 +60,19 @@ public class CommentController implements CommunityConstant {
         }
         eventProducer.fireEvent(event);
 
-//        if (comment.getEntityType() == ENTITY_TYPE_POST) {
-//            // 触发发帖事件
-//            event = new Event()
-//                    .setTopic(TOPIC_PUBLISH)
-//                    .setUserId(comment.getUserId())
-//                    .setEntityType(ENTITY_TYPE_POST)
-//                    .setEntityId(discussPostId);
-//            eventProducer.fireEvent(event);
+        if (comment.getEntityType() == ENTITY_TYPE_POST) {
+            // 触发发帖事件
+            event = new Event()
+                    .setTopic(TOPIC_PUBLISH)
+                    .setUserId(comment.getUserId())
+                    .setEntityType(ENTITY_TYPE_POST)
+                    .setEntityId(discussPostId);
+            eventProducer.fireEvent(event);
 
             // 计算帖子分数
-//            String redisKey = RedisKeyUtil.getPostScoreKey();
-//            redisTemplate.opsForSet().add(redisKey, discussPostId);
-//        }
+            String redisKey = RedisKeyUtil.getPostScoreKey();
+            redisTemplate.opsForSet().add(redisKey, discussPostId);
+        }
 
 
         return "redirect:/discuss/detail/" + discussPostId;

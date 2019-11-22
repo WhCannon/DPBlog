@@ -4,6 +4,8 @@ import com.cannon.dpblog.entity.Comment;
 import com.cannon.dpblog.entity.DiscussPost;
 import com.cannon.dpblog.entity.Page;
 import com.cannon.dpblog.entity.User;
+import com.cannon.dpblog.event.Event;
+import com.cannon.dpblog.event.EventProducer;
 import com.cannon.dpblog.service.CommentService;
 import com.cannon.dpblog.service.DiscussPostService;
 import com.cannon.dpblog.service.LikeService;
@@ -41,8 +43,8 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
-//    @Autowired
-//    private EventProducer eventProducer;
+    @Autowired
+    private EventProducer eventProducer;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -65,17 +67,17 @@ public class DiscussPostController implements CommunityConstant {
         post.setCreateTime(new Date());
         discussPostService.addDiscussPost(post);
 
-//        // 触发发帖事件
-////        Event event = new Event()
-////                .setTopic(TOPIC_PUBLISH)
-////                .setUserId(user.getId())
-////                .setEntityType(ENTITY_TYPE_POST)
-////                .setEntityId(post.getId());
-////        eventProducer.fireEvent(event);
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+        eventProducer.fireEvent(event);
 
-        // 计算帖子分数
-//        String redisKey = RedisKeyUtil.getPostScoreKey();
-//        redisTemplate.opsForSet().add(redisKey, post.getId());
+        //  计算帖子分数
+         String redisKey = RedisKeyUtil.getPostScoreKey();
+         redisTemplate.opsForSet().add(redisKey, post.getId());
 
         // 报错的情况,将来统一处理.
         return CommunityUtil.getJSONString(0, "发布成功!");
@@ -181,13 +183,13 @@ public class DiscussPostController implements CommunityConstant {
     public String setTop(int id) {
         discussPostService.updateType(id, 1);
 
-//        // 触发发帖事件
-//        Event event = new Event()
-//                .setTopic(TOPIC_PUBLISH)
-//                .setUserId(hostHolder.getUser().getId())
-//                .setEntityType(ENTITY_TYPE_POST)
-//                .setEntityId(id);
-//        eventProducer.fireEvent(event);
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+        eventProducer.fireEvent(event);
 
         return CommunityUtil.getJSONString(0);
     }
@@ -198,17 +200,17 @@ public class DiscussPostController implements CommunityConstant {
     public String setWonderful(int id) {
         discussPostService.updateStatus(id, 1);
 
-//        // 触发发帖事件
-//        Event event = new Event()
-//                .setTopic(TOPIC_PUBLISH)
-//                .setUserId(hostHolder.getUser().getId())
-//                .setEntityType(ENTITY_TYPE_POST)
-//                .setEntityId(id);
-//        eventProducer.fireEvent(event);
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+        eventProducer.fireEvent(event);
 
-        // 计算帖子分数
-        String redisKey = RedisKeyUtil.getPostScoreKey();
-        redisTemplate.opsForSet().add(redisKey, id);
+         // 计算帖子分数
+         String redisKey = RedisKeyUtil.getPostScoreKey();
+         redisTemplate.opsForSet().add(redisKey, id);
 
         return CommunityUtil.getJSONString(0);
     }
@@ -219,13 +221,13 @@ public class DiscussPostController implements CommunityConstant {
     public String setDelete(int id) {
         discussPostService.updateStatus(id, 2);
 
-//        // 触发删帖事件
-//        Event event = new Event()
-//                .setTopic(TOPIC_DELETE)
-//                .setUserId(hostHolder.getUser().getId())
-//                .setEntityType(ENTITY_TYPE_POST)
-//                .setEntityId(id);
-//        eventProducer.fireEvent(event);
+        // 触发删帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_DELETE)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+        eventProducer.fireEvent(event);
 
         return CommunityUtil.getJSONString(0);
     }
